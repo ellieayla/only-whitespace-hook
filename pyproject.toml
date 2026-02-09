@@ -1,0 +1,29 @@
+[project]
+name = "only-whitespace-hook"
+version = "0.1.0"
+description = "A commit to change whitespace should change ONLY whitespace"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = []
+
+[project.scripts]
+#only-whitespace-hook = "only_whitespace_hook.main:main"
+default-commit-message = "only_whitespace_hook.default_commit_message:main"
+
+[dependency-groups]
+dev = [
+    "mypy>=1.19.1",
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+]
+
+[tool.pytest.ini_options]
+addopts = "--cov"
+
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+format = "text"
+fail_under = 95
+show_missing = true
