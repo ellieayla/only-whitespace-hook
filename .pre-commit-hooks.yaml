@@ -10,4 +10,5 @@
   name: when a whitespace-only commit message claim is made, verify only whitespace changes are made
   entry: honest-commit-message
   language: python
+  require_serial: true
   types: [text]
