@@ -1,33 +1,12 @@
 
 from argparse import ArgumentParser
 import sys
-from only_whitespace_hook.util import cmd_output
-import subprocess
+from only_whitespace_hook.util import repo_has_non_whitespace_changes_staged, git_diff_all_changed_filenames, DEFAULT_HEADER_LINE
+import sys
 import os
 
 
-def repo_has_non_whitespace_changes_staged() -> bool:
-    cmd = ('git', 'diff', '--staged', '--quiet', '--ignore-all-space', '--ignore-blank-lines')
-    exit_code = subprocess.call(cmd)
-    assert exit_code in (0, 1)
-    return exit_code != 0  # exits 1 if diff would have shown output
-
-
-def git_diff_file_names() -> set[str]:
-    cmd = ('git', 'diff', '--staged', '--name-only', '-z')  # -z is the \0 seperator
-    return set(cmd_output(*cmd).split("\0"))
-
-
-HEADER_LINE = "Whitespace-only change"
-
-
-def main() -> int:
-    # ref https://git-scm.com/docs/githooks#_prepare_commit_msg
-    # the git prepare-commit-msg hook takes 1-3 parameters.
-    # pre-commit puts the first argument in sys.argv - the path to a filename containing the in-progress commit message
-    assert len(sys.argv) == 2
-    commit_message_filename = sys.argv[1]
-
+def main(args) -> int:
     # pre-commit puts the second argument in PRE_COMMIT_COMMIT_MSG_SOURCE:
     #  - unset:    - normal 'git commit'
     #  - message:  - git commit -m / -F
@@ -35,39 +14,44 @@ def main() -> int:
     #  - merge:    - .git/MERGE_MSG exists
     #  - commit:   - git commit --amend
     # only alter 'message' and unset cases.
-
     message_source = os.environ.get('PRE_COMMIT_COMMIT_MSG_SOURCE', 'message')
     if message_source != 'message':
-        # don't pre-populate a commit message for merge/amend commits
+        # don't pre-populate a commit message for merge/amend commits, fast-exit
         return 0
+
+    p = ArgumentParser()
+    p.add_argument("--header", type=str, required=False, default=DEFAULT_HEADER_LINE, help="commit message text indicating a whitespace-only change. (default '%(default)s')")
+    p.add_argument("commit_message_filename", metavar="COMMIT_MSG", help="Path to the commit message file.")
+    a = p.parse_args(args)
 
     if repo_has_non_whitespace_changes_staged():
         # fast exit - normal git commit with changes
         return 0
-    
-    changed_files = git_diff_file_names()
+
+    changed_files = git_diff_all_changed_filenames()
 
     if not changed_files:  # empty commit?
         return 0
 
-    with open(commit_message_filename, 'a+') as commit_message_file:
+    with open(a.commit_message_filename, 'a+') as commit_message_file:
+        # save position, seek to beginning, read contents, and check whether the header line is already added
         end_position = commit_message_file.tell()
-        commit_message_file.seek(0)  # go back to start of file for reading
-        if HEADER_LINE in commit_message_file.read():
+        commit_message_file.seek(0)
+        existing_commit_message = commit_message_file.read()
+        if a.header in existing_commit_message:
             # already have the line we would have added, just exit without altering the file
             return 0
         
-        commit_message_file.seek(end_position)
-        if end_position:
-            # appending to existing content in message, add seperator
-            commit_message_file.write("\n\n")
+        commit_message_file.seek(end_position, os.SEEK_SET)
+        if existing_commit_message:
+            commit_message_file.write("\n")  # add a seperator
 
-        commit_message_file.write(f"{HEADER_LINE} of {len(changed_files)} file{'s' if len(changed_files) != 1 else ''}:\n")
+        commit_message_file.write(f"{a.header} of {len(changed_files)} file{'s' if len(changed_files) != 1 else ''}\n")
         for filename in changed_files:
-            commit_message_file.write(f"  {filename}\n")
+            commit_message_file.write(f" -  {filename}\n")
 
     return 0
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(main(sys.argv[1:]))

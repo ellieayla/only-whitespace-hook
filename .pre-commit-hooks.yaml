@@ -1,14 +1,15 @@
 - id: default-commit-message
-  name: when a whitespace-only commit is being created, default the commit message
+  name: Default commit message for whitespace-only changes
+  description: Append "Whitespace-only change" header to proposed commit message.
   entry: default-commit-message
+  # args: [--header="Whitespace-only change"]
   language: python
-  always_run: true
   stages: [prepare-commit-msg]
-  types: [text]
 
 - id: honest-commit-message
-  name: when a whitespace-only commit message claim is made, verify only whitespace changes are made
+  name: Verify whitespace-only commit message claims are true
+  description: If a commit message claims to be changing only whitespace, verify git diff
   entry: honest-commit-message
+  # args: [--header="Whitespace-only change"]
   language: python
-  require_serial: true
-  types: [text]
+  stages: [commit-msg]

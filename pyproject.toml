@@ -18,7 +18,13 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-addopts = "--cov"
+testpaths = ["tests/"]
+pythonpath = ["."]
+addopts = "--import-mode=importlib --cov"
+
+[tool.coverage.paths]
+source = ["only_whitespace_hook"]
+tests = ["tests"]
 
 [tool.coverage.run]
 branch = true
@@ -27,3 +33,17 @@ branch = true
 format = "text"
 fail_under = 95
 show_missing = true
+
+exclude_also = [
+    "if __name__ == .__main__.:",
+]
+
+
+[tool.pytest-watcher]
+now = true
+clear = true
+notify_on_failure = false
+delay = 0.7
+runner = "uv"
+runner_args = ["run", "pytest"]
+patterns = ["*.py"]
