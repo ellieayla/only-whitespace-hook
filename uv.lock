@@ -122,7 +122,7 @@ wheels = [
 [[package]]
 name = "only-whitespace-hook"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 
 [package.dev-dependencies]
 dev = [

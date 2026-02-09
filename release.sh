@@ -26,7 +26,7 @@ fi
 
 if git diff-files --quiet; then
     echo "Unstaged changes (dirty working directory)"
-    exit 2
+    #exit 2
 fi
 
 sed -i '' "s/version = \"[0-9\.]+\"/version = \"$VERSION\"/" pyproject.toml
