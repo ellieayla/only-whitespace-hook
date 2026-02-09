@@ -1,16 +1,13 @@
-- id: ratchet-coverage
-  name: rachet fail_under coverage requirement
-  entry: ratchet-coverage
-  language: python
-  pass_filenames: false
-  always_run: true
-  require_serial: true
-  files: "pyproject.toml"
-  stages: [manual, pre-commit]
-
 - id: default-commit-message
   name: when a whitespace-only commit is being created, default the commit message
   entry: default-commit-message
   language: python
   always_run: true
   stages: [prepare-commit-msg]
+  types: [text]
+
+- id: honest-commit-message
+  name: when a whitespace-only commit message claim is made, verify only whitespace changes are made
+  entry: honest-commit-message
+  language: python
+  types: [text]

@@ -36,6 +36,8 @@ def main() -> int:
     #  - commit:   - git commit --amend
     # only alter 'message' and unset cases.
 
+    git_dir = cmd_output('git', 'rev-parse', '--git-dir').rstrip()
+    
     message_source = os.environ.get('PRE_COMMIT_COMMIT_MSG_SOURCE', 'message')
     if message_source != 'message':
         # don't pre-populate a commit message for merge/amend commits
