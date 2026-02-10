@@ -2,6 +2,7 @@
 
 if [ $# -ne 1 ]; then
     echo "Usage: $0 1.2.3"
+    echo " - current: $(grep ^version pyproject.toml)"
     exit 1
 fi
 
