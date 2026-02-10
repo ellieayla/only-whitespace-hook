@@ -30,9 +30,9 @@ def test_whitespace_change_provokes_new_commit_message(populated_git_repo: Path,
         assert main(["--header=MARKER", ".git/COMMIT_MSG"]) == 0
         assert msg.read_text() == ''
 
-    # first with empty message  
+    # first with empty message
     assert main(["--header=MARKER", ".git/COMMIT_MSG"]) == 0
-    assert 'MARKER of 1 file\n -  first\n' == msg.read_text()
+    assert 'MARKER of 1 file\n\n -  first\n' == msg.read_text()
 
     # first with existing message
     msg.write_text('existing')
@@ -83,5 +83,5 @@ def test_mixed_change(populated_git_repo: Path):
     ("header\n\n#comment\n", False),
     ("\n#comment\ntrailing\n", False),
 ])
-def test_existing_commit_message_blank(message: str, expected: bool) -> None:    
+def test_existing_commit_message_blank(message: str, expected: bool) -> None:
     assert commit_message_blank(message) == expected
