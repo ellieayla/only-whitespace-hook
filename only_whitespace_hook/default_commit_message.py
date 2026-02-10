@@ -6,7 +6,7 @@ import sys
 import os
 
 
-def main(args) -> int:
+def main(args: None | list[str] = None) -> int:
     # pre-commit puts the second argument in PRE_COMMIT_COMMIT_MSG_SOURCE:
     #  - unset:    - normal 'git commit'
     #  - message:  - git commit -m / -F
