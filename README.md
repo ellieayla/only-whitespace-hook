@@ -4,7 +4,7 @@ Commits intended to mass-change whitespace should _only_ change whitespace.
 # .pre-commit-config.yaml
 
 - repo: https://github.com/ellieayla/only-whitespace-hook
-  rev: v0.1.0
+  rev: v0.1.2
   hooks:
     - id: default-commit-message
       #args: [--header="Whitespace-only change"]
