@@ -1,4 +1,4 @@
-from only_whitespace_hook.default_commit_message import main
+from only_whitespace_hook.default_commit_message import main, commit_message_blank
 from only_whitespace_hook import util
 from pathlib import Path
 import pytest
@@ -75,3 +75,13 @@ def test_mixed_change(populated_git_repo: Path):
 
     assert main(["--header=MARKER", ".git/COMMIT_MSG"]) == 0
     assert not msg.exists()
+
+@pytest.mark.parametrize("message,expected", [
+    ("", True),
+    ("\n", True),
+    ("\n# comment\n#comment\n", True),
+    ("header\n\n#comment\n", False),
+    ("\n#comment\ntrailing\n", False),
+])
+def test_existing_commit_message_blank(message: str, expected: bool) -> None:    
+    assert commit_message_blank(message) == expected

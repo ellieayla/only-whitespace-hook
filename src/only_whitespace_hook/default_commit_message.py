@@ -6,6 +6,16 @@ import sys
 import os
 
 
+def commit_message_blank(existing_commit_message: str) -> bool:
+    for line in existing_commit_message.splitlines():
+        if line.startswith("#"):
+            continue
+        elif line.strip() == "":
+            continue
+        return False
+    return True
+
+
 def main(args: None | list[str] = None) -> int:
     # pre-commit puts the second argument in PRE_COMMIT_COMMIT_MSG_SOURCE:
     #  - unset:    - normal 'git commit'
@@ -42,13 +52,21 @@ def main(args: None | list[str] = None) -> int:
             # already have the line we would have added, just exit without altering the file
             return 0
         
-        commit_message_file.seek(end_position, os.SEEK_SET)
-        if existing_commit_message:
+        if commit_message_blank(existing_commit_message):
+            # comments and blank lines only, insert at the top
+            commit_message_file.truncate(0)
+            commit_message_file.write(f"{a.header} of {len(changed_files)} file{'s' if len(changed_files) != 1 else ''}\n")
+            commit_message_file.write("\n")
+            for filename in changed_files:
+                commit_message_file.write(f" -  {filename}\n")
+            commit_message_file.write(existing_commit_message)
+        else:
+            # already contains a message, insert after
+            commit_message_file.seek(end_position, os.SEEK_SET)
             commit_message_file.write("\n")  # add a seperator
-
-        commit_message_file.write(f"{a.header} of {len(changed_files)} file{'s' if len(changed_files) != 1 else ''}\n")
-        for filename in changed_files:
-            commit_message_file.write(f" -  {filename}\n")
+            commit_message_file.write(f"{a.header} of {len(changed_files)} file{'s' if len(changed_files) != 1 else ''}\n")
+            for filename in changed_files:
+                commit_message_file.write(f" -  {filename}\n")
 
     return 0
 

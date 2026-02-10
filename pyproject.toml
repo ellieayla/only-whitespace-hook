@@ -21,10 +21,6 @@ dev = [
 requires = ["uv_build >= 0.10.0"]
 build-backend = "uv_build"
 
-[tool.uv.build-backend]
-module-name = "only_whitespace_hook"
-module-root = ""
-
 [tool.pytest.ini_options]
 testpaths = ["tests/"]
 pythonpath = ["."]
