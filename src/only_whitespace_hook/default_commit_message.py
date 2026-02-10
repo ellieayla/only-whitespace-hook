@@ -1,6 +1,5 @@
 
 from argparse import ArgumentParser
-import sys
 from only_whitespace_hook.util import repo_has_non_whitespace_changes_staged, git_diff_all_changed_filenames, DEFAULT_HEADER_LINE
 import sys
 import os
@@ -51,7 +50,7 @@ def main(args: None | list[str] = None) -> int:
         if a.header in existing_commit_message:
             # already have the line we would have added, just exit without altering the file
             return 0
-        
+
         if commit_message_blank(existing_commit_message):
             # comments and blank lines only, insert at the top
             commit_message_file.truncate(0)

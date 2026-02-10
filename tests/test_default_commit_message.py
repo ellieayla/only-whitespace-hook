@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 
-def test_no_staged_changes_passes_silently(populated_git_repo) -> None:
+def test_no_staged_changes_passes_silently(populated_git_repo: Path) -> None:
     #default_commit_message.main()
     assert main([".git/COMMIT_MSG"]) == 0
 
@@ -15,7 +15,7 @@ def test_dirty_working_directory_ignored(populated_git_repo: Path) -> None:
     assert main([".git/COMMIT_MSG"]) == 0
 
 
-def test_whitespace_change_provokes_new_commit_message(populated_git_repo: Path, monkeypatch):
+def test_whitespace_change_provokes_new_commit_message(populated_git_repo: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     with open(populated_git_repo.joinpath("first"), 'a') as f:
         f.write("\n\n\n    \n\n\n")
     util.cmd_output(*('git', 'add', '--', 'first'), retcode=0)
@@ -44,7 +44,7 @@ def test_whitespace_change_provokes_new_commit_message(populated_git_repo: Path,
     assert 'existing\nMARKER of 1 file\n -  first\n' == msg.read_text()
 
 
-def test_new_empty_file_not_considered_whitespace(populated_git_repo: Path):
+def test_new_empty_file_not_considered_whitespace(populated_git_repo: Path) -> None:
     populated_git_repo.joinpath("third").touch()
 
     util.cmd_output(*('git', 'add', '--', 'third'), retcode=0)
@@ -60,7 +60,7 @@ def test_new_empty_file_not_considered_whitespace(populated_git_repo: Path):
     assert '' == msg.read_text()
 
 
-def test_mixed_change(populated_git_repo: Path):
+def test_mixed_change(populated_git_repo: Path) -> None:
     with open(populated_git_repo.joinpath("first"), 'a') as f:
         f.write("\n\n\n    \n\n\n")
     with open(populated_git_repo.joinpath("second"), 'a') as f:

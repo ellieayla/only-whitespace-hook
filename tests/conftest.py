@@ -1,13 +1,12 @@
 import pytest
 from pathlib import Path
 from only_whitespace_hook import util
-from contextlib import contextmanager, chdir
-from unittest import mock
-import argparse
+from contextlib import chdir
+from typing import Iterable
 
 
 @pytest.fixture
-def empty_git_repository(tmp_path: Path):
+def empty_git_repository(tmp_path: Path) -> Iterable[Path]:
     with chdir(tmp_path):
         util.cmd_output(*('git', 'init'))
         yield tmp_path

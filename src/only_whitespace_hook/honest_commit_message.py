@@ -1,9 +1,7 @@
 
 from argparse import ArgumentParser
 import sys
-from only_whitespace_hook.util import repo_has_non_whitespace_changes_staged, git_diff_non_whitespace_changed_filenames, git_diff_all_changed_filenames, DEFAULT_HEADER_LINE
-import subprocess
-import os
+from only_whitespace_hook.util import git_diff_non_whitespace_changed_filenames, DEFAULT_HEADER_LINE
 
 
 def main(args: None | list[str] = None) -> int:
@@ -25,9 +23,9 @@ def main(args: None | list[str] = None) -> int:
         return 0
 
     print(f"Commit message says '{a.header}', but non-whitespace changes are staged.", file=sys.stderr)
-    print(f"Split into multiple commits or amend the commit message.", file=sys.stderr)
+    print("Split into multiple commits or amend the commit message.", file=sys.stderr)
     print(f"  Hint:  git diff --staged --ignore-all-space --ignore-blank-lines -- {" ".join(non_whitespace_changed_files)}", file=sys.stderr)
-    
+
     return 1
 
 

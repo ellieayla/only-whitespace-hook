@@ -1,7 +1,7 @@
 # https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/util.py
 
 import subprocess
-from typing import Any
+from typing import Any, cast
 
 DEFAULT_HEADER_LINE = "Whitespace-only change"
 
@@ -12,12 +12,11 @@ class CalledProcessError(RuntimeError):
 def cmd_output(*cmd: str, retcode: int | None = 0, **kwargs: Any) -> str:
     kwargs.setdefault('stdout', subprocess.PIPE)
     kwargs.setdefault('stderr', subprocess.PIPE)
-    kwargs.setdefault('text', True)
-    proc = subprocess.Popen(cmd, **kwargs)
-    stdout, stderr = proc.communicate()
+    proc = subprocess.Popen(cmd, text=True, **kwargs)
+    stdout, stderr = proc.communicate()  # type Tuple[str,str]
     if retcode is not None and proc.returncode != retcode:
         raise CalledProcessError(cmd, retcode, proc.returncode, stdout, stderr)
-    return stdout
+    return cast(str, stdout)
 
 
 def split_null_terminators(output: str) -> set[str]:
