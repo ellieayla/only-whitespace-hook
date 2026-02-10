@@ -6,7 +6,7 @@ import subprocess
 import os
 
 
-def main(args: None | list[str]) -> int:
+def main(args: None | list[str] = None) -> int:
     p = ArgumentParser()
     p.add_argument("--header", type=str, required=False, default=DEFAULT_HEADER_LINE, help="commit message text indicating a whitespace-only change. (default '%(default)s')")
     p.add_argument("commit_message_filename", metavar="COMMIT_MSG", help="Path to the commit message file.")
