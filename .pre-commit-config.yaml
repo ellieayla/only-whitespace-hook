@@ -20,4 +20,4 @@ repos:
   rev: v1.0.1
   hooks:
   - id: ratchet-coverage
-    #args: [--write]  # automatically write pyproject.toml
+    args: [--write]  # automatically write pyproject.toml

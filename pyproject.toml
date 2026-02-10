@@ -35,7 +35,7 @@ branch = true
 
 [tool.coverage.report]
 format = "text"
-fail_under = 10
+fail_under = 95.0
 show_missing = true
 
 exclude_also = [
